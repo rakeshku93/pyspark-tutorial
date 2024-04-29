@@ -42,7 +42,7 @@ python3 --version
 download spark from the official website
 
 ```bash
-wget https://www.apache.org/dyn/closer.lua/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
+wget https://dlcdn.apache.org/spark/spark-3.5.1/spark-3.5.1-bin-hadoop3.tgz
 tar -xvzf spark-3.5.1-bin-hadoop3.tgz
 ```
 
