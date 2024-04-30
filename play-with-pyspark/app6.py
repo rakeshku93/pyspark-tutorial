@@ -1,20 +1,24 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, DateType
 from pyspark.sql.functions import spark_partition_id
-
+from pyspark import SparkConf
 
 
 '''
-Example : Working with DataFrameWriter i.e sink
+Example : Working with DataFrameWriter i.e sink  ( MySQL )
 '''
 
 
 if __name__ == "__main__":
 
+    conf=SparkConf()
+    conf.setAppName("pyspark-app")
+    conf.setMaster("local[3]")
+    
     spark = SparkSession \
         .builder \
-        .master("local[3]") \
-        .appName("pyspark-app") \
+        .config(conf=conf) \
+        .config("spark.jars.packages", "com.mysql:mysql-connector-j:8.3.0") \
         .getOrCreate()
     
 
@@ -36,16 +40,22 @@ if __name__ == "__main__":
 
 
     # Transformation
-    
+    df=flightTimeParquetDF.select("ORIGIN").distinct()
+    df.show(5)
+
+
 
     # Write ( file | json | jdbc | orc | parquet | csv | text )
-    flightTimeParquetDF=flightTimeParquetDF.coalesce(1)
+    df=df.coalesce(1)
 
-    flightTimeParquetDF.write \
-        .format("json") \
+    df.write \
+        .format("jdbc") \
         .mode("overwrite") \
-        .partitionBy("ORIGIN") \
-        .option("maxRecordsPerFile", 500) \
-        .save("output/flight-time")
+        .option("url", "jdbc:mysql://localhost:3306/flightdb") \
+        .option("dbtable", "flights") \
+        .option("user", "root") \
+        .option("password", "root1234") \
+        .option("driver", "com.mysql.cj.jdbc.Driver") \
+        .save()
 
     spark.stop()
