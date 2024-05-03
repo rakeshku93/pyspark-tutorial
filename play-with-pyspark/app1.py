@@ -17,8 +17,8 @@ from pyspark import SparkConf
 
 
 conf = SparkConf() \
-    .setAppName("app1") \
-    .setMaster("local[3]") # 3 cores , 1 for driver & 2 for executors
+    .setAppName("app1") 
+    # .setMaster("local[3]") # 3 cores , 1 for driver & 2 for executors
     
 spark = SparkSession \
     .builder \
@@ -31,7 +31,7 @@ survey_df=spark.read \
 .format("csv") \
 .option("header", "true") \
 .option("inferSchema", "true") \
-.load("./source/survey_input.csv") 
+.load("/home/ubuntu/survey.csv") 
 
 # survey_df.printSchema()
 # survey_df.show()
@@ -68,8 +68,8 @@ result_df=survey_df \
 # result_df.show()
 
 python_list=result_df.collect()
-# for row in python_list:
-#     print(row["Country"], row["count"])
+for row in python_list:
+    print(row["Country"], row["count"])
 
 # result_df.write \
 #     .format("csv") \
